@@ -76,6 +76,14 @@ int GetWeaponIndex(int entity)
 	return -1;
 }
 
+int GetWeaponIndexFromClass(char[] weaponClass)
+{
+	int weaponIndex;
+	g_smWeaponIndex.GetValue(weaponClass, weaponIndex);
+
+	return weaponIndex;
+}
+
 bool GetWeaponClass(int entity, char[] weaponClass, int size)
 {
 	int id = GetEntProp(entity, Prop_Send, "m_iItemDefinitionIndex");
@@ -255,6 +263,137 @@ int SetClientKnife(int client, char[] sKnife, bool Native = false, bool update =
 		UpdatePlayerData(client, updateFields);
 	}
 	RefreshWeapon(client, knife, knife == 0);
+	return 0;
+}
+
+int SetClientWeaponSkin(int client, char[] weaponClass, int skinId, bool update = true)
+{
+	int index = GetWeaponIndexFromClass(weaponClass);
+	g_iIndex[client] = index;
+
+	g_iSkins[client][index] = skinId;
+
+	if (update)
+	{
+		char updateFields[256];
+		char weaponName[32];
+		RemoveWeaponPrefix(g_WeaponClasses[index], weaponName, sizeof(weaponName));
+		Format(updateFields, sizeof(updateFields), "%s = %d", weaponName, skinId);
+		UpdatePlayerData(client, updateFields);
+	}
+
+	RefreshWeapon(client, index);
+
+	return 0;
+}
+
+int SetClientWeaponSeed(int client, char[] weaponClass, int seed, bool update = true)
+{
+	int index = GetWeaponIndexFromClass(weaponClass);
+	g_iIndex[client] = index;
+
+	g_iWeaponSeed[client][index] = seed;
+	g_iSeedRandom[client][index] = -1;
+
+	if (update)
+	{
+		char updateFields[256];
+		char weaponName[32];
+		RemoveWeaponPrefix(g_WeaponClasses[index], weaponName, sizeof(weaponName));
+		Format(updateFields, sizeof(updateFields), "%s_seed = %d", weaponName, seed);
+		UpdatePlayerData(client, updateFields);
+	}
+
+	RefreshWeapon(client, index);
+
+	return 0;
+}
+
+int SetClientWeaponFloat(int client, char[] weaponClass, float floatValue, bool update = true)
+{
+	int index = GetWeaponIndexFromClass(weaponClass);
+	g_iIndex[client] = index;
+
+	g_fFloatValue[client][index] = floatValue;
+
+	if (update)
+	{
+		char updateFields[256];
+		char weaponName[32];
+		RemoveWeaponPrefix(g_WeaponClasses[index], weaponName, sizeof(weaponName));
+		Format(updateFields, sizeof(updateFields), "%s_float = %f", weaponName, floatValue);
+		UpdatePlayerData(client, updateFields);
+	}
+
+	RefreshWeapon(client, index);
+
+	return 0;
+}
+
+int SetClientWeaponStatTrakStatus(int client, char[] weaponClass, bool isStatTrak, bool update = true)
+{
+	int index = GetWeaponIndexFromClass(weaponClass);
+	g_iIndex[client] = index;
+
+	int statTrakVal = isStatTrak ? 1 : 0;
+	g_iStatTrak[client][index] = statTrakVal;
+
+	if (update)
+	{
+		char updateFields[256];
+		char weaponName[32];
+		RemoveWeaponPrefix(g_WeaponClasses[index], weaponName, sizeof(weaponName));
+		Format(updateFields, sizeof(updateFields), "%s_trak = %f", weaponName, statTrakVal);
+		UpdatePlayerData(client, updateFields);
+	}
+
+	RefreshWeapon(client, index);
+
+	return 0;
+}
+
+int SetClientWeaponStatTrakCount(int client, char[] weaponClass, int statTrakCt, bool update = true)
+{
+	int index = GetWeaponIndexFromClass(weaponClass);
+	g_iIndex[client] = index;
+
+	g_iStatTrakCount[client][index] = statTrakCt;
+
+	if (update)
+	{
+		char updateFields[256];
+		char weaponName[32];
+		RemoveWeaponPrefix(g_WeaponClasses[index], weaponName, sizeof(weaponName));
+		Format(updateFields, sizeof(updateFields), "%s_trak_count = %f", weaponName, statTrakCt);
+		UpdatePlayerData(client, updateFields);
+	}
+
+	RefreshWeapon(client, index);
+
+	return 0;
+}
+
+int SetClientWeaponNameTag(int client, char[] weaponClass, char[] nameTag, bool update = true)
+{
+	int index = GetWeaponIndexFromClass(weaponClass);
+	g_iIndex[client] = index;
+
+	char nameTagTrunc[128];
+	strcopy(nameTagTrunc, sizeof(nameTagTrunc), nameTag);
+
+	g_NameTag[client][index] = nameTagTrunc;
+
+	if (update)
+	{
+		char updateFields[256];
+		char weaponName[32];
+		RemoveWeaponPrefix(g_WeaponClasses[index], weaponName, sizeof(weaponName));
+		Format(updateFields, sizeof(updateFields), "%s_tag = %f", weaponName, nameTag);
+		UpdatePlayerData(client, updateFields);
+	}
+
+	RefreshWeapon(client, index);
+
 	return 0;
 }
 
